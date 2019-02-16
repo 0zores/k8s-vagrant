@@ -1,0 +1,28 @@
+---
+- name: "k8smaster"
+  box: centos/7
+  ssh_port: 2200
+  ip: "192.168.33.10"
+  ram: 2048
+  vcpu: 2
+
+- name: "k8snode01"
+  box: centos/7
+  ssh_port: 2201
+  ip: "192.168.33.11"
+  ram: 2048
+  vcpu: 2
+
+- name: "k8snode02"
+  box: centos/7
+  ssh_port: 2202
+  ip: "192.168.33.12"
+  ram: 2048
+  vcpu: 2 
+
+- name: "k8snode03"
+  box: "centos/7"
+  ssh_port: 2203
+  ip: "192.168.33.10"
+  ram: 2048
+  vcpu: 2 
