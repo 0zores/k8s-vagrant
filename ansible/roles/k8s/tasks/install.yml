@@ -1,0 +1,59 @@
+---
+- name: update whole os
+  yum:
+    name: '*'
+    state: latest
+
+- name: add kubernetes repo
+  yum_repository:
+    name: "{{ k8s_yum_name }}"
+    baseurl: "{{ k8s_yum_baseurl }}"
+    enabled: "{{ k8s_yum_enabled }}"
+    gpgcheck: "{{ k8s_yum_gpgcheck }}"
+    repo_gpgcheck: "{{ k8s_yum_repo_gpgcheck }}"
+    gpgkey: "{{ k8s_yum_gpgkey }}"
+    exclude: "{{ k8s_yum_exclude }}"
+    state: present
+
+- name: set selinux to permissive
+  selinux:
+    state: permissive
+  
+- name: install kubernetes packages
+  yum:
+    name: "{{ item }}"
+    state: latest
+  with_items:
+  - "{{ k8s_required_packages }}"
+
+- name: remove swapfile from /etc/fstab
+  mount:
+    name: swap
+    fstype: swap
+    state: absent
+
+- name: disable swap
+  command: swapoff -a
+  when: ansible_swaptotal_mb > 0
+
+- name: set some kernel parameters
+  sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    reload: yes
+    state: present
+  with_dict:
+  - "{{ k8s_required_sysctl_cfg }}"
+
+- name: kubelet extra args
+  template:
+    src: kubelet.j2
+    dest: /etc/default/kubelet
+
+- name: enable and start kubelet service
+  systemd:
+    name: kubelet
+    daemon_reload: yes
+    enabled: yes
+    state: started
+    masked: no

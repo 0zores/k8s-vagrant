@@ -1,0 +1,25 @@
+---
+k8s_yum_name: kubernetes
+k8s_yum_baseurl: https://packages.cloud.google.com/yum/repos/kubernetes-el7-x86_64
+k8s_yum_enabled: yes
+k8s_yum_gpgcheck: yes
+k8s_yum_repo_gpgcheck: yes
+k8s_yum_gpgkey: "https://packages.cloud.google.com/yum/doc/yum-key.gpg https://packages.cloud.google.com/yum/doc/rpm-package-key.gpg"
+k8s_yum_exclude: "kube*"
+
+k8s_required_packages:
+  - epel-release
+  - docker
+  - kubelet
+  - kubeadm
+  - kubectl
+
+k8s_required_sysctl_cfg:
+  - {name: vm.swappiness, value: 0}
+  - {name: net.bridge.bridge-nf-call-ip6tables, value: 1}
+  - {name: net.bridge.bridge-nf-call-iptables, value: 1}
+
+k8s_calico_cidr: "192.168.0.0/16"
+k8s_calico_addon:
+  - "https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/rbac-kdd.yaml"
+  - "https://docs.projectcalico.org/v3.3/getting-started/kubernetes/installation/hosted/kubernetes-datastore/calico-networking/1.7/calico.yaml"

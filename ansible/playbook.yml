@@ -1,0 +1,5 @@
+- hosts: all
+  become: yes
+  tasks:
+  - import_role:
+      name: k8s

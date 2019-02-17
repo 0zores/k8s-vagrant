@@ -1,0 +1,5 @@
+---
+- name: execute join command
+  shell: "{{ kubeadm_join_cmd.stdout }}"
+  register: execute_join_cmd
+  failed_when: execute_join_cmd.rc != 0

@@ -7,7 +7,13 @@ servers = YAML.load_file(File.join(File.dirname(__FILE__), 'servers.yml'))
 servers.each do |servers|
 
   Vagrant.configure(2) do |config|
-  
+    
+    config.hostmanager.enabled = true
+    config.hostmanager.manage_host = true
+    config.hostmanager.manage_guest = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline = true
+
       # Define the nodes configuration doing a iteration 
     config.vm.define servers["name"] do |srv|
 
@@ -18,21 +24,28 @@ servers.each do |servers|
         srv.vm.network "forwarded_port", guest: 22, host: 2222, id: "ssh", disabled: true
         srv.vm.network "forwarded_port", guest: 22, host: servers["ssh_port"], auto_correct: true
         
-        if servers["provider"] == "virtualbox"
-            srv.vm.provider "virtualbox" do |vb|
-                vb.memory = servers["ram"]
-                vb.cpus = servers["vcpus"]
-            end
-        elsif servers["provider"] == "vmware"
-            srv.vm.provider "vmware_desktop" do |vmw|
-                vmw.vmx["memsize"] = servers["ram"]
-                vmw.vmx["numvcpus"] = servers["vcpus"]
-            end
-        elsif servers["provider"] == "libvirt"
-            srv.vm.provider "libvirt" do |virt|
-                virt.memory = servers["ram"]
-                virt.cpus = servers["vcpus"]
-            end
+        srv.vm.provider "libvirt" do |virt|
+            virt.memory = servers["ram"]
+            virt.cpus = servers["vcpus"]
+        end
+
+        srv.vm.provider "virtualbox" do |vb|
+            vb.memory = servers["ram"]
+            vb.cpus = servers["vcpus"]
+        end
+
+        srv.vm.provider "vmware_desktop" do |vmw|
+            vmw.vmx["memsize"] = servers["ram"]
+            vmw.vmx["numvcpus"] = servers["vcpus"]
+        end
+
+        srv.vm.provision "ansible" do |ansible|
+            ansible.playbook = "ansible/playbook.yml"
+            ansible.groups = {
+                "k8s-master" => ["k8smaster"],
+                "k8s-node"  => ["k8snode01", "k8snode02", "k8snode03"],
+                "k8s:children" => ["k8s-master", "k8s-node"]
+            }
         end
     end
   end

@@ -1,0 +1,38 @@
+---
+- name: check connectivity to gcr.io
+  shell: kubeadm config images pull
+  register: kubeadm_result
+  failed_when: kubeadm_result.rc != 0
+
+- name: kubeadm init
+  shell: | 
+    kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }} \
+    --apiserver-cert-extra-sans={{ ansible_default_ipv4.address }} \
+    --pod-network-cidr={ k8s_calico_cidr }}"
+
+- name: create .kube directory
+  file:
+    path: /home/vagrant/.kube
+    state: directory
+    owner: vagrant
+    group: vagrant
+    mode: 0770
+
+- name: copy kubernetes config
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /home/vagrant/.kube/config
+    owner: vagrant
+    group: vagrant
+    mode: 0770
+    remote_src: yes
+
+- name: install calico pod network
+  shell: "kubectl apply -f {{ item }}"
+  with_items:
+  - "{{ k8s_calico_addon }}"
+
+- name: generate join command
+  shell: kubeadm token create --print-join-command
+  register: kubeadm_join_cmd
+  failed_when: kubeadm_join_cmd.rc != 0
