@@ -26,6 +26,17 @@
   with_items:
   - "{{ k8s_required_packages }}"
 
+- name: create docker group
+  group:
+    name: docker
+    state: present
+
+- name: add user vagrant to docker group
+  user:
+    name: vagrant
+    append: yes
+    groups: docker
+
 - name: remove swapfile from /etc/fstab
   mount:
     name: swap
