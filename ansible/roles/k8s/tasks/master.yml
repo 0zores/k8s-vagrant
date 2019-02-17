@@ -1,14 +1,9 @@
 ---
 - name: check connectivity to gcr.io
   shell: kubeadm config images pull
-  register: kubeadm_result
-  failed_when: kubeadm_result.rc != 0
-
+  
 - name: kubeadm init
-  shell: | 
-    kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }} \
-    --apiserver-cert-extra-sans={{ ansible_default_ipv4.address }} \
-    --pod-network-cidr={ k8s_calico_cidr }}"
+  shell: "kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }} --apiserver-cert-extra-sans={{ ansible_default_ipv4.address }} --pod-network-cidr={{ k8s_calico_cidr }}"
 
 - name: create .kube directory
   file:

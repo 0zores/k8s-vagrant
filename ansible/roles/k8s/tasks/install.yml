@@ -3,6 +3,7 @@
   yum:
     name: '*'
     state: latest
+    update_cache: yes
 
 - name: add kubernetes repo
   yum_repository:
@@ -13,17 +14,21 @@
     repo_gpgcheck: "{{ k8s_yum_repo_gpgcheck }}"
     gpgkey: "{{ k8s_yum_gpgkey }}"
     exclude: "{{ k8s_yum_exclude }}"
+    description: "Kubernetes Repo"
     state: present
 
 - name: set selinux to permissive
   selinux:
     state: permissive
+    policy: targeted
   
-- name: install kubernetes packages
+- name: install required packages
   yum:
     name: "{{ item }}"
+    update_cache: yes
     state: latest
-  with_items:
+    disable_excludes: kubernetes
+  with_items: 
   - "{{ k8s_required_packages }}"
 
 - name: create docker group
@@ -53,7 +58,7 @@
     value: "{{ item.value }}"
     reload: yes
     state: present
-  with_dict:
+  with_items:
   - "{{ k8s_required_sysctl_cfg }}"
 
 - name: kubelet extra args
@@ -61,10 +66,13 @@
     src: kubelet.j2
     dest: /etc/default/kubelet
 
-- name: enable and start kubelet service
+- name: enable and start services
   systemd:
-    name: kubelet
+    name: "{{ item }}"
     daemon_reload: yes
     enabled: yes
     state: started
     masked: no
+  with_items:
+    - kubelet
+    - docker

@@ -6,3 +6,6 @@
 
 - import_tasks: node.yml
   when: "'k8s-node' in group_names"
+
+- import_tasks: extras.yml
+  
