@@ -3,5 +3,5 @@
   shell: "kubectl apply -f {{ k8s_dashboard_addon }}"
 
 - name: start kubectl proxy
-  shell: nohup kubectl proxy > /dev/null 2>&1 &
+  shell: nohup kubectl proxy --address 0.0.0.0 --accept-hosts '.*' > /dev/null 2>&1 &
   
