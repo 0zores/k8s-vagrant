@@ -1,4 +1,7 @@
 ---
 - name: install kubernetes dashboard
   shell: "kubectl apply -f {{ k8s_dashboard_addon }}"
+
+- name: start kubectl proxy
+  shell: nohup kubectl proxy > /dev/null 2>&1 &
   
