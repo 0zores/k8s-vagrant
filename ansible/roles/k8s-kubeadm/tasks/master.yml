@@ -1,11 +1,13 @@
 ---
-- name: check connectivity to gcr.io
-  shell: kubeadm config images pull
+- name: check if kubeadm already run
+  shell: ps -ef | egrep '(kube-apiserver|kube-scheduler|kube-proxy)' | grep -v grep | wc -l
+  register: kubeadm_run
   
 - name: kubeadm init
   shell: "kubeadm init --apiserver-advertise-address={{ ansible_default_ipv4.address }} --apiserver-cert-extra-sans={{ ansible_default_ipv4.address }} --pod-network-cidr={{ k8s_calico_cidr }}"
+  when: kubeadm_run.stdout|int == 0
 
-- name: create .kube directory
+- name: create .kube directory (vagrant user)
   file:
     path: /home/vagrant/.kube
     state: directory
@@ -13,12 +15,29 @@
     group: vagrant
     mode: 0770
 
-- name: copy kubernetes config
+- name: create .kube directory (root user)
+  file:
+    path: /root/.kube
+    state: directory
+    owner: root
+    group: root
+    mode: 0770
+
+- name: copy kubernetes config (vagrant user)
   copy:
     src: /etc/kubernetes/admin.conf
     dest: /home/vagrant/.kube/config
     owner: vagrant
     group: vagrant
+    mode: 0770
+    remote_src: yes
+
+- name: copy kubernetes config (root user)
+  copy:
+    src: /etc/kubernetes/admin.conf
+    dest: /root/.kube/config
+    owner: root
+    group: root
     mode: 0770
     remote_src: yes
 

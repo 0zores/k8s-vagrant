@@ -1,0 +1,4 @@
+---
+- name: install kubernetes dashboard
+  shell: "kubectl apply -f {{ k8s_dashboard_addon }}"
+  

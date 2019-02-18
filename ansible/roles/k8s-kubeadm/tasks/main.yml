@@ -8,4 +8,4 @@
   when: "'k8s-node' in group_names"
 
 - import_tasks: extras.yml
-  
+  when: "'k8s-master' in group_names"

@@ -42,6 +42,11 @@
     append: yes
     groups: docker
 
+- name: add netfilter module
+  modprobe:
+    name: br_netfilter
+    state: present
+
 - name: remove swapfile from /etc/fstab
   mount:
     name: swap

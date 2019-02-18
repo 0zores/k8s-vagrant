@@ -7,7 +7,7 @@ servers = YAML.load_file(File.join(File.dirname(__FILE__), 'servers.yml'))
 
 Vagrant.configure(2) do |config|
     
-    config.hostmanager.enabled = true
+    config.hostmanager.enabled = false
     
     servers.each do |servers|
       # Define the nodes configuration doing a iteration 
@@ -19,6 +19,7 @@ Vagrant.configure(2) do |config|
             srv.vm.network "private_network", ip: servers["ip"]
             srv.vm.network "forwarded_port", guest: 22, host: 2222, id: "ssh", disabled: true
             srv.vm.network "forwarded_port", guest: 22, host: servers["ssh_port"], auto_correct: true
+            srv.vm.network "forwarded_port", guest: 8443, host: 8443, auto_correct: true
         
             srv.vm.provider "libvirt" do |virt|
                 virt.memory = servers["ram"]
