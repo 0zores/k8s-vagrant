@@ -20,9 +20,9 @@ Vagrant.configure(2) do |config|
             srv.vm.network "forwarded_port", guest: 22, host: 2222, id: "ssh", disabled: true
             srv.vm.network "forwarded_port", guest: 22, host: servers["ssh_port"], auto_correct: true
             if servers['name'] == 'k8smaster'
-              srv.vm.network "forwarded_port", guest: 8443, host: 8443, auto_correct: true
+              srv.vm.network "forwarded_port", guest: 8001, host: 8001, auto_correct: true
             end
-            
+
             srv.vm.provider "libvirt" do |virt|
                 virt.memory = servers["ram"]
                 virt.cpus = servers["vcpu"]
