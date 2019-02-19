@@ -7,7 +7,7 @@ servers = YAML.load_file(File.join(File.dirname(__FILE__), 'servers.yml'))
 
 Vagrant.configure(2) do |config|
     
-    config.hostmanager.enabled = false
+    #config.hostmanager.enabled = false
     
     servers.each do |servers|
       # Define the nodes configuration doing a iteration 
