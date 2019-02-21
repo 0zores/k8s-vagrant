@@ -4,8 +4,8 @@ Deploy a multi-node cluster for Kubernetes using Vagrant + Ansible
 
 ## What do you need
 
-- Vagrant
-- Ansible
+- Vagrant >= 2.1.2
+- Ansible >= 2.7
 
 ## How to use
 
@@ -20,7 +20,7 @@ Deploy a multi-node cluster for Kubernetes using Vagrant + Ansible
         - k8snode02
         - k8snode03
 
-## Disclaimers
+## Important Notices
 
 - I tested heavily under Fedora Linux and using libvirt provider, but I think this should work using a different OS and a different provider (at least VirtualBox and VMWare should work)
 - For now, I'm using the kubeadm method to deploy the cluster
