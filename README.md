@@ -20,6 +20,15 @@ Deploy a multi-node cluster for Kubernetes using Vagrant + Ansible
         - k8snode02
         - k8snode03
 
+## Validating
+
+- Access the master machine using `vagrant ssh k8smaster`
+- Run the command `kubectl get nodes`
+    - To see the status of all kubernetes nodes, you should see 4 nodes with Ready status
+- Run the command `kubectl get pods -n kube-system`
+    - To see the status of all pods of the kube-system namespace, you should see all the pods with Running status
+    - Except one `calico-xxxx` pod that sometimes remains in the Error state, but for now this is not a big issue
+
 ## Important Notices
 
 - I tested heavily under Fedora Linux and using libvirt provider, but I think this should work using a different OS and a different provider (at least VirtualBox and VMWare should work)
