@@ -42,6 +42,7 @@ Vagrant.configure(2) do |config|
                 srv.vm.provision "ansible" do |ansible|
                   ansible.playbook = "ansible/playbook.yml"
                   ansible.limit = "all"
+                  ansible.verbose = true
                   ansible.groups = {
                     "k8s-master" => ["k8smaster"],
                     "k8s-node"  => ["k8snode01", "k8snode02", "k8snode03"],
